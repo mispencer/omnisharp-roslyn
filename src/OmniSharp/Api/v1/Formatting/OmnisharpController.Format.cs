@@ -12,7 +12,7 @@ namespace OmniSharp
         [HttpPost("formatAfterKeystroke")]
         public async Task<FormatRangeResponse> FormatAfterKeystroke(FormatAfterKeystrokeRequest request)
         {
-            var document = _workspace.GetDocument(request.FileName);
+            var document = _workspace.GetDocument(_pathRewriter.ToServerPath(request.FileName));
             if (document == null)
             {
                 return null;
@@ -31,7 +31,7 @@ namespace OmniSharp
         [HttpPost("formatRange")]
         public async Task<FormatRangeResponse> FormatRange(FormatRangeRequest request)
         {
-            var document = _workspace.GetDocument(request.FileName);
+            var document = _workspace.GetDocument(_pathRewriter.ToServerPath(request.FileName));
             if (document == null)
             {
                 return null;
@@ -51,7 +51,7 @@ namespace OmniSharp
         [HttpPost("codeformat")]
         public async Task<CodeFormatResponse> FormatDocument(Request request)
         {
-            var document = _workspace.GetDocument(request.FileName);
+            var document = _workspace.GetDocument(_pathRewriter.ToServerPath(request.FileName));
             if (document == null)
             {
                 return null;

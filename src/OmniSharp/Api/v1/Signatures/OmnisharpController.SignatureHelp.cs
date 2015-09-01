@@ -15,7 +15,7 @@ namespace OmniSharp
         public async Task<SignatureHelp> GetSignatureHelp(Request request)
         {
             var invocations = new List<InvocationContext>();
-            foreach (var document in _workspace.GetDocuments(request.FileName))
+            foreach (var document in _workspace.GetDocuments(_pathRewriter.ToServerPath(request.FileName)))
             {
                 var invocation = await GetInvocation(document, request);
                 if (invocation != null)

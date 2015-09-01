@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using OmniSharp.Models;
+using OmniSharp.Services;
 
 namespace OmniSharp
 {
@@ -15,12 +16,14 @@ namespace OmniSharp
     {
         private OmnisharpWorkspace _workspace;
         private IEnumerable<ITestCommandProvider> _testCommandProviders;
+        private readonly IPathRewriter _pathRewriter;
 
         public TestCommandController(OmnisharpWorkspace workspace,
-                                     IEnumerable<ITestCommandProvider> testCommandProviders)
+                                     IEnumerable<ITestCommandProvider> testCommandProviders, IPathRewriter pathRewriter)
         {
             _workspace = workspace;
             _testCommandProviders = testCommandProviders;
+            _pathRewriter = pathRewriter;
         }
 
         [HttpPost("gettestcontext")]
@@ -28,7 +31,7 @@ namespace OmniSharp
         {
             var quickFixes = new List<QuickFix>();
 
-            var document = _workspace.GetDocument(request.FileName);
+            var document = _workspace.GetDocument(_pathRewriter.ToServerPath(request.FileName));
             var response = new GetTestCommandResponse();
             if (document != null)
             {

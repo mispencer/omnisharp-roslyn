@@ -13,7 +13,7 @@ namespace OmniSharp
         [HttpPost("typelookup")]
         public async Task<TypeLookupResponse> TypeLookup(TypeLookupRequest request)
         {
-            var document = _workspace.GetDocument(request.FileName);
+            var document = _workspace.GetDocument(_pathRewriter.ToServerPath(request.FileName));
             var response = new TypeLookupResponse();
             if (document != null)
             {

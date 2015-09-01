@@ -15,7 +15,7 @@ namespace OmniSharp
         [HttpPost("findusages")]
         public async Task<QuickFixResponse> FindUsages(FindUsagesRequest request)
         {
-            var document = _workspace.GetDocument(request.FileName);
+            var document = _workspace.GetDocument(_pathRewriter.ToServerPath(request.FileName));
             var response = new QuickFixResponse();
             if (document != null)
             {
@@ -40,7 +40,7 @@ namespace OmniSharp
                     if (!request.ExcludeDefinition)
                     {
                         var definitionLocations = usage.Definition.Locations
-                            .Where(loc => loc.IsInSource && (!request.OnlyThisFile || loc.SourceTree.FilePath == request.FileName));
+                            .Where(loc => loc.IsInSource && (!request.OnlyThisFile || loc.SourceTree.FilePath == _pathRewriter.ToServerPath(request.FileName)));
 
                         foreach (var location in definitionLocations)
                         {
@@ -52,6 +52,11 @@ namespace OmniSharp
                 var quickFixTasks = locations.Select(async l => await GetQuickFix(l));
 
                 var quickFixes = await Task.WhenAll(quickFixTasks);
+
+                foreach(var qf in quickFixes) {
+                    qf.FileName =  _pathRewriter.ToClientPath(qf.FileName);
+                }
+
                 response = new QuickFixResponse(quickFixes.Distinct()
                                                 .OrderBy(q => q.FileName)
                                                 .ThenBy(q => q.Line)

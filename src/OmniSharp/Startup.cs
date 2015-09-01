@@ -8,6 +8,7 @@ using Microsoft.Framework.Caching.Memory;
 using Microsoft.Framework.ConfigurationModel;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Logging;
+using Microsoft.Framework.OptionsModel;
 #if DNX451
 using NuGet.Protocol.Core.Types;
 #endif
@@ -42,6 +43,9 @@ namespace OmniSharp
             {
                 configuration.AddJsonFile(Program.Environment.ConfigurationPath);
             }
+            configuration.Add(new MemoryConfigurationSource {
+                { "pathOptions:clientMode", Program.Environment.ClientPathMode.ToString() }
+            });
 
             configuration.AddEnvironmentVariables();
 
@@ -59,8 +63,9 @@ namespace OmniSharp
 
             services.Configure<MvcOptions>(opt =>
             {
+                var serviceProvider = services.BuildServiceProvider();
                 opt.Conventions.Add(new FromBodyApplicationModelConvention());
-                opt.Filters.Add(new UpdateBufferFilter(Workspace));
+                opt.Filters.Add(serviceProvider.GetRequiredService<UpdateBufferFilter>());
             });
 
             // Add the omnisharp workspace to the container
@@ -107,6 +112,11 @@ namespace OmniSharp
 
             // Setup the options from configuration
             services.Configure<OmniSharpOptions>(Configuration);
+
+            // Path rewrite
+            services.AddSingleton<IPathRewriter>(i => new OsPathRewriter(i.GetRequiredService<IOptions<OmniSharpOptions>>()));
+
+            services.AddSingleton<UpdateBufferFilter>();
         }
 
         public static OmnisharpWorkspace CreateWorkspace()

@@ -4,6 +4,7 @@ using OmniSharp.Models;
 using OmniSharp.Models.v1;
 using OmniSharp.MSBuild;
 using OmniSharp.ScriptCs;
+using OmniSharp.Services;
 
 namespace OmniSharp
 {
@@ -13,14 +14,16 @@ namespace OmniSharp
         private readonly OmnisharpWorkspace _workspace;
         private readonly MSBuildContext _msbuildContext;
         private readonly ScriptCsContext _scriptCsContext;
+        private readonly IPathRewriter _pathRewriter;
 
         public ProjectSystemController(DnxContext dnxContext, MSBuildContext msbuildContext, ScriptCsContext scriptCsContext,
-            OmnisharpWorkspace workspace)
+            OmnisharpWorkspace workspace, IPathRewriter pathRewriter)
         {
             _dnxContext = dnxContext;
             _msbuildContext = msbuildContext;
             _scriptCsContext = scriptCsContext;
             _workspace = workspace;
+            _pathRewriter = pathRewriter;
         }
 
         [HttpPost("/projects")]
@@ -38,7 +41,7 @@ namespace OmniSharp
         [HttpPost("/project")]
         public ProjectInformationResponse CurrentProject(Request request)
         {
-            var document = _workspace.GetDocument(request.FileName);
+            var document = _workspace.GetDocument(_pathRewriter.ToServerPath(request.FileName));
 
             var msBuildContextProject = _msbuildContext?.GetProject(document?.Project.FilePath);
             var dnxContextProject = _dnxContext?.GetProject(document?.Project.FilePath);

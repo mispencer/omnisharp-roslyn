@@ -15,7 +15,7 @@ namespace OmniSharp
         [HttpPost("highlight")]
         public async Task<HighlightResponse> Highlight(HighlightRequest request)
         {
-            var documents = _workspace.GetDocuments(request.FileName);
+            var documents = _workspace.GetDocuments(_pathRewriter.ToServerPath(request.FileName));
             if (request.ProjectNames != null && request.ProjectNames.Length > 0)
             {
                 documents = documents.Where(d => request.ProjectNames.Contains(d.Project.Name, StringComparer.Ordinal));

@@ -18,7 +18,7 @@ namespace OmniSharp
         {
             var quickFixes = new List<QuickFix>();
 
-            var document = _workspace.GetDocument(request.FileName);
+            var document = _workspace.GetDocument(_pathRewriter.ToServerPath(request.FileName));
             var response = new GotoDefinitionResponse();
             if (document != null)
             {
@@ -37,7 +37,7 @@ namespace OmniSharp
                         var lineSpan = symbol.Locations.First().GetMappedLineSpan();
                         response = new GotoDefinitionResponse
                         {
-                            FileName = lineSpan.Path,
+                            FileName = _pathRewriter.ToClientPath(lineSpan.Path),
                             Line = lineSpan.StartLinePosition.Line + 1,
                             Column = lineSpan.StartLinePosition.Character + 1
                         };

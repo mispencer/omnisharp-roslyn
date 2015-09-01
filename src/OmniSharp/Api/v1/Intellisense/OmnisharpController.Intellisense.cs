@@ -21,7 +21,7 @@ namespace OmniSharp
         [HttpPost("autocomplete")]
         public async Task<IEnumerable<AutoCompleteResponse>> AutoComplete(AutoCompleteRequest request)
         {
-            var documents = _workspace.GetDocuments(request.FileName);
+            var documents = _workspace.GetDocuments(_pathRewriter.ToServerPath(request.FileName));
             var wordToComplete = request.WordToComplete;
 
             foreach (var document in documents)

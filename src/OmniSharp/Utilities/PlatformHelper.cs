@@ -1,3 +1,4 @@
+using OmniSharp.Options;
 using System;
 
 namespace OmniSharp
@@ -11,6 +12,12 @@ namespace OmniSharp
             get
             {
                 return _isMono.Value;
+            }
+        }
+
+        public static PathMode DefaultPathMode {
+            get {
+                return IsMono ? PathMode.Unix : PathMode.Windows;
             }
         }
     }

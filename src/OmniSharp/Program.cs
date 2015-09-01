@@ -9,8 +9,10 @@ using Microsoft.Framework.ConfigurationModel;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Logging;
 using Microsoft.Framework.Runtime;
+using OmniSharp.Options;
 using OmniSharp.Services;
 using OmniSharp.Stdio.Services;
+using OmniSharp.Extensions;
 
 namespace OmniSharp
 {
@@ -33,6 +35,7 @@ namespace OmniSharp
             var hostPID = -1;
             var transportType = TransportType.Http;
             var otherArgs = new List<string>();
+            var clientPathMode = PlatformHelper.DefaultPathMode;
 
             var enumerator = args.GetEnumerator();
 
@@ -42,7 +45,7 @@ namespace OmniSharp
                 if (arg == "-s")
                 {
                     enumerator.MoveNext();
-                    applicationRoot = Path.GetFullPath((string)enumerator.Current);
+                    applicationRoot = (string)enumerator.Current;
                 }
                 else if (arg == "-p")
                 {
@@ -62,13 +65,21 @@ namespace OmniSharp
                 {
                     transportType = TransportType.Stdio;
                 }
+                else if (arg == "--client-path-mode")
+                {
+                    enumerator.MoveNext();
+                    clientPathMode = (PathMode)Enum.Parse(typeof(PathMode), (string)enumerator.Current);
+                }
                 else
                 {
                     otherArgs.Add((string)enumerator.Current);
                 }
             }
 
-            Environment = new OmnisharpEnvironment(applicationRoot, serverPort, hostPID, logLevel, transportType, otherArgs.ToArray());
+            var rewriter = new OsPathRewriter(clientPathMode, PlatformHelper.DefaultPathMode);
+            applicationRoot = Path.GetFullPath(rewriter.ToServerPath(applicationRoot));
+
+            Environment = new OmnisharpEnvironment(applicationRoot, serverPort, hostPID, logLevel, transportType, clientPathMode, otherArgs.ToArray());
 
             var config = new Configuration()
              .AddCommandLine(new[] { "--server.urls", "http://localhost:" + serverPort });

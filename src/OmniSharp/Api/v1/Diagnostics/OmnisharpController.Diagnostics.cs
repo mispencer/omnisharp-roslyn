@@ -16,7 +16,7 @@ namespace OmniSharp
             var quickFixes = new List<QuickFix>();
 
             var documents = request.FileName != null
-                ? _workspace.GetDocuments(request.FileName)
+                ? _workspace.GetDocuments(_pathRewriter.ToServerPath(request.FileName))
                 : _workspace.CurrentSolution.Projects.SelectMany(project => project.Documents);
 
             foreach (var document in documents)
@@ -49,12 +49,12 @@ namespace OmniSharp
             return new QuickFixResponse(quickFixes);
         }
 
-        private static QuickFix MakeQuickFix(Diagnostic diagnostic)
+        private QuickFix MakeQuickFix(Diagnostic diagnostic)
         {
             var span = diagnostic.Location.GetMappedLineSpan();
             return new DiagnosticLocation
             {
-                FileName = span.Path,
+                FileName = _pathRewriter.ToClientPath(span.Path),
                 Line = span.StartLinePosition.Line + 1,
                 Column = span.StartLinePosition.Character + 1,
                 EndLine = span.EndLinePosition.Line + 1,

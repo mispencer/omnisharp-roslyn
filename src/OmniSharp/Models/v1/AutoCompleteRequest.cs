@@ -28,6 +28,12 @@ namespace OmniSharp.Models
         public bool WantImportableTypes { get; set; }
 
         /// <summary>
+        ///   Specifies whether to return importable types. Defaults to
+        ///   false. Can be turned off to get a small speed boost.
+        /// </summary>
+        public bool ForceSemanticCompletion { get; set; }
+
+        /// <summary>
         /// Returns a 'method header' for working with parameter templating.
         /// </summary>
         public bool WantMethodHeader { get; set; }

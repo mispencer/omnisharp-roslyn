@@ -15,7 +15,7 @@ namespace OmniSharp
         [HttpPost("findimplementations")]
         public async Task<QuickFixResponse> FindImplementations(Request request)
         {
-            var document = _workspace.GetDocument(request.FileName);
+            var document = _workspace.GetDocument(_pathRewriter.ToServerPath(request.FileName));
             var response = new QuickFixResponse();
 
             if (document != null)
@@ -33,6 +33,10 @@ namespace OmniSharp
 
                 var derivedTypes = await GetDerivedTypes(symbol);
                 await AddQuickFixes(quickFixes, derivedTypes);
+
+                foreach(var qf in quickFixes) {
+                    qf.FileName =  _pathRewriter.ToClientPath(qf.FileName);
+                }
 
                 response = new QuickFixResponse(quickFixes.OrderBy(q => q.FileName)
                                                             .ThenBy(q => q.Line)

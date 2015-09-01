@@ -9,6 +9,7 @@ namespace OmniSharp
         [HttpPost("updatebuffer")]
         public async Task<ObjectResult> UpdateBuffer(UpdateBufferRequest request)
         {
+            request.FileName = _pathRewriter.ToServerPath(request.FileName);
             await _workspace.BufferManager.UpdateBuffer(request);
             return new ObjectResult(true);
         }
@@ -16,6 +17,7 @@ namespace OmniSharp
         [HttpPost("changebuffer")]
         public async Task<ObjectResult> ChangeBuffer(ChangeBufferRequest request)
         {
+            request.FileName = _pathRewriter.ToServerPath(request.FileName);
             await _workspace.BufferManager.UpdateBuffer(request);
             return new ObjectResult(true);
         }

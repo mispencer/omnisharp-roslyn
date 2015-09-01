@@ -18,7 +18,7 @@ namespace OmniSharp
         {
             var response = new RenameResponse();
 
-            var document = _workspace.GetDocument(request.FileName);
+            var document = _workspace.GetDocument(_pathRewriter.ToServerPath(request.FileName));
             if (document != null)
             {
                 var sourceText = await document.GetTextAsync();

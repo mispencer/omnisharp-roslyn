@@ -1,16 +1,19 @@
 ﻿using System.Linq;
 using Microsoft.AspNet.Mvc;
 using OmniSharp.Models;
+using OmniSharp.Services;
 
 namespace OmniSharp.Filters
 {
     public class UpdateBufferFilter : IActionFilter
     {
         private OmnisharpWorkspace _workspace;
+        private readonly IPathRewriter _pathRewriter;
 
-        public UpdateBufferFilter(OmnisharpWorkspace workspace)
+        public UpdateBufferFilter(OmnisharpWorkspace workspace, IPathRewriter pathRewriter)
         {
             _workspace = workspace;
+            _pathRewriter = pathRewriter;
         }
 
         public void OnActionExecuted(ActionExecutedContext context)
@@ -21,10 +24,12 @@ namespace OmniSharp.Filters
         {
             if (context.ActionArguments.Any())
             {
-                var request = context.ActionArguments.FirstOrDefault(arg => arg.Value is Request);
-                if (request.Value != null)
+                var requestArg = context.ActionArguments.FirstOrDefault(arg => arg.Value is Request);
+                if (requestArg.Value != null)
                 {
-                    await _workspace.BufferManager.UpdateBuffer((Request)request.Value);
+                    var request = (Request)requestArg.Value;
+                    request.FileName = _pathRewriter.ToServerPath(request.FileName);
+                    await _workspace.BufferManager.UpdateBuffer(request);
                 }
             }
         }

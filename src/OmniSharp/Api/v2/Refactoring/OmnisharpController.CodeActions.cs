@@ -21,14 +21,16 @@ namespace OmniSharp.Api.V2
     {
         private readonly OmnisharpWorkspace _workspace;
         private readonly IEnumerable<ICodeActionProvider> _codeActionProviders;
+        private readonly IPathRewriter _pathRewriter;
         private Document _originalDocument;
 
         private readonly ILogger _logger;
 
-        public CodeActionController(OmnisharpWorkspace workspace, IEnumerable<ICodeActionProvider> providers, ILoggerFactory loggerFactory)
+        public CodeActionController(OmnisharpWorkspace workspace, IEnumerable<ICodeActionProvider> providers, ILoggerFactory loggerFactory, IPathRewriter pathRewriter)
         {
             _workspace = workspace;
             _codeActionProviders = providers;
+            _pathRewriter = pathRewriter;
             _logger = loggerFactory.CreateLogger<CodeActionController>();
         }
 
@@ -60,7 +62,7 @@ namespace OmniSharp.Api.V2
             }
 
             var response = new RunCodeActionResponse();
-            var directoryName = Path.GetDirectoryName(request.FileName);
+            var directoryName = Path.GetDirectoryName(_pathRewriter.ToServerPath(request.FileName));
             var changes = await FileChanges.GetFileChangesAsync(_workspace.CurrentSolution, solution, directoryName, request.WantsTextChanges);
 
             response.Changes = changes;
@@ -71,7 +73,7 @@ namespace OmniSharp.Api.V2
         private async Task<IEnumerable<CodeAction>> GetActions(ICodeActionRequest request)
         {
             var actions = new List<CodeAction>();
-            _originalDocument = _workspace.GetDocument(request.FileName);
+            _originalDocument = _workspace.GetDocument(_pathRewriter.ToServerPath(request.FileName));
             if (_originalDocument == null)
             {
                 return actions;

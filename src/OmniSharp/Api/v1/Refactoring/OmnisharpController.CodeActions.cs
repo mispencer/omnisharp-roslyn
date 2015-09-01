@@ -15,11 +15,13 @@ namespace OmniSharp
     {
         private readonly OmnisharpWorkspace _workspace;
         private readonly IEnumerable<ICodeActionProvider> _codeActionProviders;
+        private readonly IPathRewriter _pathRewriter;
 
-        public CodeActionController(OmnisharpWorkspace workspace, IEnumerable<ICodeActionProvider> providers)
+        public CodeActionController(OmnisharpWorkspace workspace, IEnumerable<ICodeActionProvider> providers, IPathRewriter pathRewriter)
         {
             _workspace = workspace;
             _codeActionProviders = providers;
+            _pathRewriter = pathRewriter;
         }
 
         [HttpPost("getcodeactions")]
@@ -72,7 +74,7 @@ namespace OmniSharp
 
         private async Task<CodeRefactoringContext?> GetContext(CodeActionRequest request, List<CodeAction> actionsDestination)
         {
-            var document = _workspace.GetDocument(request.FileName);
+            var document = _workspace.GetDocument(_pathRewriter.ToServerPath(request.FileName));
             if (document != null)
             {
                 var sourceText = await document.GetTextAsync();
