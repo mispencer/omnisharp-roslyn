@@ -21,7 +21,7 @@ class Foo {
             var workspace = TestHelpers.CreateSimpleWorkspace(new Dictionary<string, string> {
                 { "foo.cs", source1 }, { "bar.cs", source2}
             });
-            var controller = new OmnisharpController(workspace, null);
+            var controller = new OmnisharpController(workspace, null, new FakeApplicationShutdown());
             var response = await controller.Metadata(new MetadataRequest
             {
                 AssemblyName = "mscorlib",
@@ -46,7 +46,7 @@ class Foo {
             var workspace = TestHelpers.CreateSimpleWorkspace(new Dictionary<string, string> {
                 { "foo.cs", source1 }, { "bar.cs", source2}
             });
-            var controller = new OmnisharpController(workspace, null);
+            var controller = new OmnisharpController(workspace, null, new FakeApplicationShutdown());
             var response = await controller.Metadata(new MetadataRequest
             {
                 AssemblyName = "System.Core",
@@ -71,7 +71,7 @@ class Foo {
             var workspace = TestHelpers.CreateSimpleWorkspace(new Dictionary<string, string> {
                 { "foo.cs", source1 }, { "bar.cs", source2}
             });
-            var controller = new OmnisharpController(workspace, null);
+            var controller = new OmnisharpController(workspace, null, new FakeApplicationShutdown());
             var response = await controller.Metadata(new MetadataRequest
             {
                 AssemblyName = "mscorlib",

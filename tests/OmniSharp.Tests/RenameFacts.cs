@@ -17,7 +17,7 @@ namespace OmniSharp.Tests
                                                        bool applyTextChanges = true)
         {
             var lineColumn = TestHelpers.GetLineAndColumnFromDollar(fileContent);
-            var controller = new OmnisharpController(workspace, new FakeOmniSharpOptions());
+            var controller = new OmnisharpController(workspace, new FakeOmniSharpOptions(), new FakeApplicationShutdown());
             var request = new RenameRequest
             {
                 Line = lineColumn.Line,

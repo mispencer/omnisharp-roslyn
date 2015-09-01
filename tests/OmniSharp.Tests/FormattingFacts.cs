@@ -189,7 +189,7 @@ class C {
         private static async Task<IEnumerable<LinePositionSpanTextChange>> FormattingChangesForRange(FormatRangeRequest req)
         {
             var workspace = TestHelpers.CreateSimpleWorkspace(req.Buffer, req.FileName);
-            var controller = new OmnisharpController(workspace, null);
+            var controller = new OmnisharpController(workspace, null, new FakeApplicationShutdown());
 
             return (await controller.FormatRange(req)).Changes;
         }

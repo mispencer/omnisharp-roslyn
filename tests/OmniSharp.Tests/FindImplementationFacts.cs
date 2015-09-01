@@ -71,7 +71,7 @@ namespace OmniSharp.Tests
         private async Task<IEnumerable<ISymbol>> FindImplementations(string source)
         {
             var workspace = TestHelpers.CreateSimpleWorkspace(source);
-            var controller = new OmnisharpController(workspace, new FakeOmniSharpOptions());
+            var controller = new OmnisharpController(workspace, new FakeOmniSharpOptions(), new FakeApplicationShutdown());
             var request = CreateRequest(source);
             var bufferFilter = new UpdateBufferFilter(workspace);
             bufferFilter.OnActionExecuting(TestHelpers.CreateActionExecutingContext(request, controller));

@@ -21,7 +21,7 @@ class Foo {
             var workspace = TestHelpers.CreateSimpleWorkspace(new Dictionary<string, string> {
                 { "foo.cs", source1 }, { "bar.cs", source2}
             });
-            var controller = new OmnisharpController(workspace, null);
+            var controller = new OmnisharpController(workspace, null, new FakeApplicationShutdown());
             var definitionResponse = await controller.GotoDefinition(new GotoDefinitionRequest
             {
                 FileName = "bar.cs",
@@ -49,7 +49,7 @@ class Foo {
             var workspace = TestHelpers.CreateSimpleWorkspace(new Dictionary<string, string> {
                 { "foo.cs", source1 }, { "bar.cs", source2}
             });
-            var controller = new OmnisharpController(workspace, null);
+            var controller = new OmnisharpController(workspace, null, new FakeApplicationShutdown());
             var definitionResponse = await controller.GotoDefinition(new GotoDefinitionRequest
             {
                 FileName = "bar.cs",
@@ -66,7 +66,7 @@ class Foo {
         [Fact]
         public async Task ReturnsPositionInMetadata_WhenSymbolIsMethod()
         {
-            var controller = new OmnisharpController(CreateTestWorkspace(), null);
+            var controller = new OmnisharpController(CreateTestWorkspace(), null, new FakeApplicationShutdown());
             var definitionResponse = await controller.GotoDefinition(new GotoDefinitionRequest
             {
                 FileName = "bar.cs",
@@ -88,7 +88,7 @@ class Foo {
         [Fact]
         public async Task ReturnsPositionInMetadata_WhenSymbolIsExtensionMethod()
         {
-            var controller = new OmnisharpController(CreateTestWorkspace(), null);
+            var controller = new OmnisharpController(CreateTestWorkspace(), null, new FakeApplicationShutdown());
             var definitionResponse = await controller.GotoDefinition(new GotoDefinitionRequest
             {
                 FileName = "bar.cs",
@@ -109,7 +109,7 @@ class Foo {
         [Fact]
         public async Task ReturnsPositionInMetadata_WhenSymbolIsType()
         {
-            var controller = new OmnisharpController(CreateTestWorkspace(), null);
+            var controller = new OmnisharpController(CreateTestWorkspace(), null, new FakeApplicationShutdown());
             var definitionResponse = await controller.GotoDefinition(new GotoDefinitionRequest
             {
                 FileName = "bar.cs",
@@ -130,7 +130,7 @@ class Foo {
         [Fact]
         public async Task ReturnsPositionInMetadata_WhenSymbolIsGenericType()
         {
-            var controller = new OmnisharpController(CreateTestWorkspace(), null);
+            var controller = new OmnisharpController(CreateTestWorkspace(), null, new FakeApplicationShutdown());
             var definitionResponse = await controller.GotoDefinition(new GotoDefinitionRequest
             {
                 FileName = "bar.cs",
@@ -151,7 +151,7 @@ class Foo {
         [Fact]
         public async Task ReturnsFullNameInMetadata_WhenSymbolIsType()
         {
-            var controller = new OmnisharpController(CreateTestWorkspace(), null);
+            var controller = new OmnisharpController(CreateTestWorkspace(), null, new FakeApplicationShutdown());
             var definitionResponse = await controller.GotoDefinition(new GotoDefinitionRequest
             {
                 FileName = "bar.cs",
