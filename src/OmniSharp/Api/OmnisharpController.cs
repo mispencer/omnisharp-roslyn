@@ -23,9 +23,10 @@ namespace OmniSharp
         [HttpPost("stopserver")]
         public bool StopServer()
         {
-            new Timer(i => {
+            new Thread(() => {
+                Thread.Sleep(200);
                 _applicationShutdown.RequestShutdown();
-            }, null, 1000, Timeout.Infinite);
+            });
             return true;
         }
     }
