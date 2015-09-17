@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Framework.OptionsModel;
 using Microsoft.Framework.Runtime;
@@ -23,7 +24,7 @@ namespace OmniSharp
         [HttpPost("stopserver")]
         public bool StopServer()
         {
-            new Thread(() => {
+            Task.Run(() => {
                 Thread.Sleep(200);
                 _applicationShutdown.RequestShutdown();
             });
